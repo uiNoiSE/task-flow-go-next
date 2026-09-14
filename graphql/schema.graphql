@@ -1,0 +1,80 @@
+scalar DateTime
+
+enum Priority {
+  LOW
+  REGULAR
+  HIGH
+}
+
+type User {
+  id: ID!
+  name: String!
+  position: String
+  avatar: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  boards: [Board!]!
+  team: Team
+}
+
+type Team {
+  id: ID!
+  name: String!
+  description: String
+  users: [User!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Column {
+  id: ID!
+  title: String!
+  position: Int!
+  tasks: [Task!]!
+}
+
+type Task {
+  id: ID!
+  title: String!
+  description: String
+  body: String
+  column: Column!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
+  assigner: User!
+  performer: User
+  priority: Priority!
+  order: Float!
+}
+
+type Board {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  columns: [Column!]!
+}
+
+type Query {
+  board(id: ID!): Board
+  boards(userId: ID!): [Board!]!
+}
+
+input CreateTaskInput {
+  title: String!
+  description: String
+  columnId: ID!
+  priority: Priority = REGULAR
+  position: Float! = 0.0
+}
+
+input MoveTaskInput {
+  taskId: ID!
+  targetColumnId: ID!
+  position: Float! = 0.0
+}
+
+type Mutation {
+  createTask(input: CreateTaskInput!): Task!
+  moveTask(input: MoveTaskInput!): Task!
+}
